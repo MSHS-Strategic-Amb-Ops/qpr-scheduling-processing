@@ -44,7 +44,7 @@ qpr_scheduling_query <- glue("CREATE TABLE PROD_QPR_SCHEDULING AS
                              END AS SITE_FINAL,
                              CASE WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NOT NULL THEN k.OFFICE_PROCEDURE_APPT_MAP
                                   WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NULL AND k.OFFICE_PROCEDURE_PROV_MAP IS NOT NULL THEN k.OFFICE_PROCEDURE_PROV_MAP
-                                  WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NULL AND k.OFFICE_PROCEDURE_PROV_MAP IS NULL THEN k.OFFICE_PROCEDURE_DEPT_MAP
+                                  WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NULL AND k.OFFICE_PROCEDURE_PROV_MAP IS NULL AND k.OFFICE_PROCEDURE_DEPT_MAP IS NOT NULL THEN k.OFFICE_PROCEDURE_DEPT_MAP
                              ELSE k.OFFICE_PROCEDURE_DEPT_MAP
                              END AS OFFICE_PROCEDURE_FINAL
                              FROM
@@ -81,7 +81,7 @@ qpr_scheduling_query <- glue("CREATE TABLE PROD_QPR_SCHEDULING AS
                              ON e.DEPARTMENT_ID = f.DEPARTMENT_ID AND e.NPI = f.NPI) g
                              LEFT JOIN
                              (SELECT * FROM MASTER_AMB_MAPPING_APPT) h
-                             ON g.CAMPUS_SPECIALTY_APPT_MAP = h.CLINICAL_DEPT_DEPT_MAP AND g.PRC_NAME = h.PRC_NAME) k
+                             ON g.CLINICAL_DEPT_DEPT_MAP = h.CAMPUS_SPECIALTY_APPT_MAP AND g.PRC_NAME = h.PRC_NAME) k
                              ")
 
 qpr_scheduling_index <- glue("CREATE index qpr_scheduling_index on PROD_QPR_SCHEDULING (DEPARTMENT_ID, CAMPUS)")
