@@ -40,7 +40,7 @@ qpr_scheduling_query <- glue("CREATE TABLE PROD_QPR_SCHEDULING AS
                              CASE WHEN k.SITE_PROV_MAP IS NOT NULL THEN k.SITE_PROV_MAP
                                   WHEN k.SITE_PROV_MAP IS NULL AND k.SITE_DEPT_MAP IS NOT NULL THEN k.SITE_DEPT_MAP
                                   WHEN k.SITE_PROV_MAP IS NULL AND k.SITE_DEPT_MAP IS NULL THEN k.SITE
-                                  ELSE k.CAMPUS
+                                  ELSE k.SITE
                              END AS SITE_FINAL,
                              CASE WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NOT NULL THEN k.OFFICE_PROCEDURE_APPT_MAP
                                   WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NULL AND k.OFFICE_PROCEDURE_PROV_MAP IS NOT NULL THEN k.OFFICE_PROCEDURE_PROV_MAP
