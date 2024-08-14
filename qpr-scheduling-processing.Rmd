@@ -39,27 +39,37 @@ qpr_scheduling_query <- glue("CREATE TABLE PROD_QPR_SCHEDULING AS
                              END AS DEPT_MANAGED_FINAL,
                              CASE WHEN k.SITE_PROV_MAP IS NOT NULL THEN k.SITE_PROV_MAP
                                   WHEN k.SITE_PROV_MAP IS NULL AND k.SITE_DEPT_MAP IS NOT NULL THEN k.SITE_DEPT_MAP
-                                  WHEN k.SITE_PROV_MAP IS NULL AND k.SITE_DEPT_MAP IS NULL THEN k.CAMPUS
-                                  ELSE k.CAMPUS
+                                  WHEN k.SITE_PROV_MAP IS NULL AND k.SITE_DEPT_MAP IS NULL THEN k.SITE
+                                  ELSE k.SITE
                              END AS SITE_FINAL,
                              CASE WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NOT NULL THEN k.OFFICE_PROCEDURE_APPT_MAP
                                   WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NULL AND k.OFFICE_PROCEDURE_PROV_MAP IS NOT NULL THEN k.OFFICE_PROCEDURE_PROV_MAP
-                                  WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NULL AND k.OFFICE_PROCEDURE_PROV_MAP IS NULL AND k.OFFICE_PROCEDURE_DEPT_MAP IS NOT NULL THEN k.OFFICE_PROCEDURE_DEPT_MAP
+                                  WHEN k.OFFICE_PROCEDURE_APPT_MAP IS NULL AND k.OFFICE_PROCEDURE_PROV_MAP IS NULL AND k.OFFICE_PROCEDURE_DEPT_MAP IS NOT NULL 
+                                  THEN k.OFFICE_PROCEDURE_DEPT_MAP
                              ELSE k.OFFICE_PROCEDURE_DEPT_MAP
-                             END AS OFFICE_PROCEDURE_FINAL
+                             END AS OFFICE_PROCEDURE_FINAL,
+                             CASE WHEN k.CLINICAL_DEPT_PROV_MAP_ORG IS NOT NULL THEN k.CLINICAL_DEPT_PROV_MAP_ORG
+                                  WHEN k.CLINICAL_DEPT_PROV_MAP_ORG IS NULL AND k.CLINICAL_DEPT_DEPT_MAP_ORG IS NOT NULL THEN k.CLINICAL_DEPT_DEPT_MAP_ORG
+                                  ELSE k.CLINICAL_DEPT_DEPT_MAP_ORG
+                             END AS CLINICAL_DEPT_DEPT_MAP,
+                             CASE WHEN k.CLINICAL_SUB_DEPT_PROV_MAP_ORG IS NOT NULL THEN k.CLINICAL_SUB_DEPT_PROV_MAP_ORG 
+                                  WHEN k.CLINICAL_SUB_DEPT_PROV_MAP_ORG IS NULL AND k.CLINICAL_SUB_DEPT_DEPT_MAP_ORG IS NOT NULL THEN k.CLINICAL_SUB_DEPT_DEPT_MAP_ORG
+                                  ELSE k.CLINICAL_SUB_DEPT_DEPT_MAP_ORG
+                             END AS CLINICAL_SUB_DEPT_DEPT_MAP
                              FROM
                              (SELECT g.*, h.OFFICE_PROCEDURE_APPT_MAP
                              FROM
-                             (SELECT e.*, f.DEPT_MANAGED_PROV_MAP, f.SITE_PROV_MAP, f.OFFICE_PROCEDURE_PROV_MAP
+                             (SELECT e.*, f.DEPT_MANAGED_PROV_MAP, f.SITE_PROV_MAP, f.OFFICE_PROCEDURE_PROV_MAP, f.CLINICAL_DEPT_PROV_MAP_ORG,
+                             f.CLINICAL_SUB_DEPT_PROV_MAP_ORG
                              FROM
-                             (SELECT c.*, d.CAMPUS, d.CAMPUS_SPECIALTY, d.CLINICAL_DEPT_DEPT_MAP,
-                             d.CLINICAL_SUB_DEPT_DEPT_MAP, d.DEPT_MANAGED_DEPT_MAP, d.OFFICE_PROCEDURE_DEPT_MAP,
+                             (SELECT c.*, d.CLINICAL_DEPT_DEPT_MAP_ORG,
+                             d.CLINICAL_SUB_DEPT_DEPT_MAP_ORG, d.DEPT_MANAGED_DEPT_MAP, d.OFFICE_PROCEDURE_DEPT_MAP,
                              d.SITE_DEPT_MAP
                              FROM
                              (SELECT a.*, b.ADDRESS_CITY, b.ADDRESS_COUNTY, b.ADDRESS_LINE_1, b.ADDRESS_LINE_2, 
                              b.ADDRESS_LINE_3, b.CLEAN_ADDRESS_ZIP_CODE, b.STATE, b.LATITUDE, b.LONGITUDE
                              FROM
-                             (SELECT APPT_DTTM, APPT_MADE_DTTM, CONTACT_DATE, DEPARTMENT_ID, DEPARTMENT_NAME, 
+                             (SELECT APPT_DTTM, APPT_MADE_DTTM, CONTACT_DATE, SITE, DEPARTMENT_ID, DEPARTMENT_NAME, 
                              NPI, PROV_NAME_WID, PRC_NAME, PAT_ENC_CSN_ID, VISIT_GROUP_NUM, VISIT_METHOD,
                              DERIVED_STATUS_DESC, FINCLASS, VISITPLAN, VISITPAYOR,
                              ENC_CLOSED_CHARGE_STATUS, Y_ENC_CLOSE_TIME, DEP_RPT_GRP_SEVENTEEN,
@@ -81,7 +91,7 @@ qpr_scheduling_query <- glue("CREATE TABLE PROD_QPR_SCHEDULING AS
                              ON e.DEPARTMENT_ID = f.DEPARTMENT_ID AND e.NPI = f.NPI) g
                              LEFT JOIN
                              (SELECT * FROM MASTER_AMB_MAPPING_APPT) h
-                             ON g.CLINICAL_DEPT_DEPT_MAP = h.CAMPUS_SPECIALTY_APPT_MAP AND g.PRC_NAME = h.PRC_NAME) k
+                             ON g.CLINICAL_DEPT_DEPT_MAP_ORG = h.CLINICAL_DEPT_APPT_MAP_ORG AND g.PRC_NAME = h.PRC_NAME) k
                              ")
 
 qpr_scheduling_index <- glue("CREATE index qpr_scheduling_index on PROD_QPR_SCHEDULING (DEPARTMENT_ID, CAMPUS)")
