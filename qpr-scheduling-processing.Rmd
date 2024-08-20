@@ -55,7 +55,8 @@ qpr_scheduling_query <- glue("CREATE TABLE PROD_QPR_SCHEDULING AS
                              CASE WHEN k.CLINICAL_SUB_DEPT_PROV_MAP_ORG IS NOT NULL THEN k.CLINICAL_SUB_DEPT_PROV_MAP_ORG 
                                   WHEN k.CLINICAL_SUB_DEPT_PROV_MAP_ORG IS NULL AND k.CLINICAL_SUB_DEPT_DEPT_MAP_ORG IS NOT NULL THEN k.CLINICAL_SUB_DEPT_DEPT_MAP_ORG
                                   ELSE k.CLINICAL_SUB_DEPT_DEPT_MAP_ORG
-                             END AS CLINICAL_SUB_DEPT_DEPT_MAP
+                             END AS CLINICAL_SUB_DEPT_DEPT_MAP,
+                             TRUNC(SYSDATE) AS LAST_UPDATED
                              FROM
                              (SELECT g.*, h.OFFICE_PROCEDURE_APPT_MAP
                              FROM
@@ -69,7 +70,7 @@ qpr_scheduling_query <- glue("CREATE TABLE PROD_QPR_SCHEDULING AS
                              (SELECT a.*, b.ADDRESS_CITY, b.ADDRESS_COUNTY, b.ADDRESS_LINE_1, b.ADDRESS_LINE_2, 
                              b.ADDRESS_LINE_3, b.CLEAN_ADDRESS_ZIP_CODE, b.STATE, b.LATITUDE, b.LONGITUDE
                              FROM
-                             (SELECT APPT_DTTM, APPT_MADE_DTTM, CONTACT_DATE, SITE, DEPARTMENT_ID, DEPARTMENT_NAME, 
+                             (SELECT APPT_DTTM, APPT_MADE_DTTM, CONTACT_DATE, SITE, DEPARTMENT_ID, DEPARTMENT_NAME, DEPT_SPECIALTY_NAME,
                              NPI, PROV_NAME_WID, PRC_NAME, PAT_ENC_CSN_ID, VISIT_GROUP_NUM, VISIT_METHOD,
                              DERIVED_STATUS_DESC, FINCLASS, VISITPLAN, VISITPAYOR,
                              ENC_CLOSED_CHARGE_STATUS, Y_ENC_CLOSE_TIME, DEP_RPT_GRP_SEVENTEEN,
