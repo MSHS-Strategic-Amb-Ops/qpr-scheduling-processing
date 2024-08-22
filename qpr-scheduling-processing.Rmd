@@ -80,7 +80,7 @@ qpr_scheduling_query <- glue("CREATE TABLE PROD_QPR_SCHEDULING AS
                              ELSE ZIP_CODE
                              END AS PAT_CLEANED_ZIP_CODE
                              FROM MV_DM_PATIENT_ACCESS
-                             WHERE EXTRACT(YEAR FROM APPT_MADE_DTTM) >= 2021) a
+                             WHERE EXTRACT(YEAR FROM APPT_DTTM) >= 2021) a
                              LEFT JOIN 
                              (SELECT * FROM DEPARTMENT_LONG_LAT) b
                              ON a.DEPARTMENT_ID = b.DEPARTMENT_ID) c
