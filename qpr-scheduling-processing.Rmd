@@ -31,6 +31,7 @@ zipcode_index <- glue("CREATE index zipcode_index on DEPARTMENT_LONG_LAT (DEPART
 ## creating qpr scheduling processed table
 
 qpr_scheduling_drop <- glue("DROP TABLE PROD_QPR_SCHEDULING")
+
 qpr_scheduling_query <- glue("
 CREATE TABLE PROD_QPR_SCHEDULING AS
 SELECT k.*, l.TYPE, l.CATEGORY,
